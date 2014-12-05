@@ -17,17 +17,19 @@ public class Downloader implements Runnable {
     /* list of texts to display on screen */
     public static ArrayList<String> texts = new ArrayList<String>();
     /* version number */
-    private static final String version = "1.0.1";
+    private static final String version = "1.0.2";
     /* web address to download files from */
     private static final String updateAdr = "http://discocentral.digibase.ca/SPP/update/";
     /* folder to save files to */
-    private static final String folder = System.getProperty("user.dir").replace("\\", "/");
+    private static final String folder = FileUtil.getJarFolder().substring(0, FileUtil.getJarFolder().length() - 2).replace("\\", "/");
     /* gets start of OS name. Win, Mac, Linus, SunOS or FreeBSD (some others exist, but fuck them, nobody uses anyway, right? RIGHT?) */
     private static final String OS = System.getProperty("os.name").split(" ")[0].replace("dows", "");
 
     @Override
     /* base method */
     public void run() {
+        /* print out launch folder */
+        display("launch folder: "+ folder);
         /* get program version */
         title("Checking downloader version");
         App.repaint();
