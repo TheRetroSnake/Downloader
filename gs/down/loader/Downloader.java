@@ -17,7 +17,7 @@ public class Downloader implements Runnable {
     /* list of texts to display on screen */
     public static ArrayList<String> texts = new ArrayList<String>();
     /* version number */
-    private static final String version = "1.0.2";
+    private static final String version = "1.0.3";
     /* web address to download files from */
     private static final String updateAdr = "http://discocentral.digibase.ca/SPP/update/";
     /* folder to save files to */
