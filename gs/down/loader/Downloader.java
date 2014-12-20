@@ -4,10 +4,7 @@ import gs.app.lib.application.App;
 import gs.app.lib.util.FileUtil;
 import gs.app.lib.util.KeyUtil;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -17,11 +14,11 @@ public class Downloader implements Runnable {
     /* list of texts to display on screen */
     public static ArrayList<String> texts = new ArrayList<String>();
     /* version number */
-    private static final String version = "1.0.3";
+    private static final String version = "1.0.4";
     /* web address to download files from */
     private static final String updateAdr = "http://discocentral.digibase.ca/SPP/update/";
     /* folder to save files to */
-    private static final String folder = FileUtil.getJarFolder().substring(0, FileUtil.getJarFolder().length() - 2).replace("\\", "/");
+    private static final String folder = FileUtil.getJarFolder().replace("\\", "/");
     /* gets start of OS name. Win, Mac, Linus, SunOS or FreeBSD (some others exist, but fuck them, nobody uses anyway, right? RIGHT?) */
     private static final String OS = System.getProperty("os.name").split(" ")[0].replace("dows", "");
 
@@ -29,26 +26,34 @@ public class Downloader implements Runnable {
     /* base method */
     public void run() {
         /* print out launch folder */
-        display("launch folder: "+ folder);
-        /* get program version */
-        title("Checking downloader version");
-        App.repaint();
-        String ver = GetVersion(updateAdr +"latest.txt");
-
-        if (!ver.equals(version)) {
-            /* if program is outdated, display information */
-            latest("Outdated downloader!");
-            display("Current version: "+ ver);
-            display("Newest version: "+ version);
-            title("Please download an update from release threads");
-            App.repaint();
+        display("launch folder: " + folder);
+        /* Make sure we got the correct folder */
+        if(!IsRightFolder()){
+            /* error message */
+            display("launch folder does not contain Downloader.jar!");
+            display("Are you sure this is correct folder, and this application is not renamed?");
 
         } else {
-            /* update files */
-            latest("Up to date!");
-            title("Finding files to update");
+        /* get program version */
+            title("Checking downloader version");
             App.repaint();
-            UpdateFiles(updateAdr + "downloads.txt");
+            String ver = GetVersion(updateAdr + "latest.txt");
+
+            if (!ver.equals(version)) {
+            /* if program is outdated, display information */
+                latest("Outdated downloader!");
+                display("Current version: " + ver);
+                display("Newest version: " + version);
+                title("Please download an update from release threads");
+                App.repaint();
+
+            } else {
+            /* update files */
+                latest("Up to date!");
+                title("Finding files to update");
+                App.repaint();
+                UpdateFiles(updateAdr + "downloads.txt");
+            }
         }
 
         /* display exit information */
@@ -67,6 +72,22 @@ public class Downloader implements Runnable {
 
         /* DONE */
         App.exit(0);
+    }
+
+    private boolean IsRightFolder() {
+        File[] files = new File(folder).listFiles();
+        if(files != null) {
+
+            for (File f : files) {
+                if (f != null && f.isFile()) {
+                    if (f.getName().equals("Downloader.jar")) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     /* download specific file and spit out in byte array */
